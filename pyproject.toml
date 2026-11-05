@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "symantec-edr-aiops"
+version = "0.1.0"
+description = "Governed operations for Symantec Zero Trust Network Access"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "Wei Zhou", email = "zhouwei008@gmail.com" }]
+dependencies = ["httpx>=0.27,<1.0", "typer>=0.12,<1.0", "mcp[cli]>=2.0,<3.0"]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.5,<1.0"]
+
+[project.scripts]
+symantec-edr-aiops = "symantec_edr_aiops.cli:main"
+symantec-edr-aiops-mcp = "symantec_edr_aiops.mcp_server.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["symantec_edr_aiops"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"symantec_edr_aiops/governance/*.py" = ["E501", "N818"]
+"symantec_edr_aiops/mcp_server/**/*.py" = ["UP007", "UP045"]

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "symantec-edr-aiops": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "symantec-edr-aiops==0.1.0",
+        "symantec-edr-aiops-mcp"
+      ]
+    }
+  }
+}

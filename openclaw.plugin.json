@@ -1,0 +1,24 @@
+{
+  "id": "symantec-edr-aiops",
+  "name": "Symantec Endpoint Detection and Response (on-premises) AIops",
+  "description": "Governed Symantec on-prem EDR — 4 MCP tools, read-only with audit.",
+  "skills": [
+    "./skills"
+  ],
+  "mcpServers": {
+    "symantec-edr-aiops": {
+      "transport": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "symantec-edr-aiops==0.1.0",
+        "symantec-edr-aiops-mcp"
+      ]
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}
