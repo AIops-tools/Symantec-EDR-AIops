@@ -12,7 +12,7 @@ The auth scheme, listed paths, query bounds and response examples informed the r
 
 ## Local validation
 
-- Contract-shaped HTTP mock tests and inherited governance tests passed (37 pytest tests). Ruff passed; Bandit found 0 Medium+ issues. The 0.1.0 wheel installed in an external virtual environment and its MCP server imported from site-packages. All five handbook gates passed over 36 tools.
+- Contract-shaped HTTP mock tests and inherited governance tests passed (38 pytest tests). Ruff passed; Bandit found 0 Medium+ issues. The 0.1.0 wheel installed in an external virtual environment and its MCP server imported from site-packages. All five handbook gates passed over 36 tools.
 - The vendored governance harness uses the same path for MCP and CLI. Query-only POST routes are explicitly allowlisted.
 
 ## Not yet verified
