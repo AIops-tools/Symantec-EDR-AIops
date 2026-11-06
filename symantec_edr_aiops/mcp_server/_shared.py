@@ -39,7 +39,7 @@ mcp = MCPServer(
     "symantec-edr-aiops",
     version=__version__,
     instructions=(
-        "Audited EDR tenant, application, connector and policy read tools. "
+        "Audited on-prem EDR investigation, threat-feed, policy and sandbox-result read tools. "
         "No state-changing tools in this preview."
     ),
 )

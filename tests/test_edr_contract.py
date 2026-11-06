@@ -56,3 +56,39 @@ def test_appliance_shape_is_not_assumed_healthy():
     )
     with pytest.raises(EdrError, match="unexpected appliance"):
         ops.appliances(conn)
+
+
+def test_entity_search_is_query_only_and_cursor_is_preserved():
+    seen = []
+
+    def handler(request):
+        if request.url.path == "/api/oauth2/tokens":
+            return httpx.Response(200, json={"token": {"access_token": "t", "expires_in": 3600}})
+        seen.append(request)
+        return httpx.Response(200, json={"result": [{"sha2": "a"}], "next": "opaque", "total": 3})
+
+    conn = EdrConnection(
+        httpx.Client(base_url="https://edr.example", transport=httpx.MockTransport(handler))
+    )
+    page = ops.file_entities(conn, "sha2:abc", 25)
+    assert page["nextCursor"] == "opaque" and page["truncated"]
+    assert seen[0].url.path == "/api/atpapi/v2/entities/files"
+    assert b'"verb":"query"' in seen[0].content
+    with pytest.raises(ValueError, match="read operations"):
+        conn.query("/api/atpapi/v2/sandbox/commands", {"verb": "query"})
+
+
+def test_sandbox_sha_is_strict_and_paged_result_is_validated():
+    sha = "a" * 64
+
+    def handler(request):
+        if request.url.path == "/api/oauth2/tokens":
+            return httpx.Response(200, json={"token": {"access_token": "t", "expires_in": 3600}})
+        return httpx.Response(200, json={"result": [{"name": "pattern"}], "next": "n", "total": 2})
+
+    conn = EdrConnection(
+        httpx.Client(base_url="https://edr.example", transport=httpx.MockTransport(handler))
+    )
+    assert ops.sandbox_patterns(conn, sha, 10)["nextCursor"] == "n"
+    with pytest.raises(ValueError, match="sha2"):
+        ops.sandbox_patterns(conn, "../bad")

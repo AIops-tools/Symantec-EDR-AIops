@@ -10,6 +10,8 @@ from urllib.parse import urlsplit
 
 import httpx
 
+_MAX_RESPONSE_BYTES = 16 * 1024 * 1024
+
 
 class EdrError(RuntimeError):
     def __init__(self, message: str, *, status_code: int | None = None) -> None:
@@ -106,18 +108,20 @@ class EdrConnection:
     ) -> Any:
         if path.startswith("//") or not (path.startswith("/api/atpapi/v2/")):
             raise ValueError("Undocumented EDR resource path")
-        if method != "GET" and (
-            method != "POST"
-            or not (
-                path
-                in {
-                    "/api/atpapi/v2/incidents",
-                    "/api/atpapi/v2/events",
-                    "/api/atpapi/v2/auditevents",
-                }
-                or (path.startswith("/api/atpapi/v2/commands/") and path.endswith("/results"))
-            )
-        ):
+        query_routes = {
+            "/api/atpapi/v2/incidents",
+            "/api/atpapi/v2/events",
+            "/api/atpapi/v2/auditevents",
+            "/api/atpapi/v2/incidentevents",
+            "/api/atpapi/v2/incidentlineageevents",
+            "/api/atpapi/v2/systemactivities",
+            "/api/atpapi/v2/entities",
+            "/api/atpapi/v2/entities/files",
+            "/api/atpapi/v2/datafeeds/adversary/actors",
+            "/api/atpapi/v2/datafeeds/adversary/files",
+            "/api/atpapi/v2/datafeeds/adversary/networks",
+        }
+        if method != "GET" and (method != "POST" or path not in query_routes):
             raise ValueError("EDR transport only exposes documented read operations")
         if method == "POST" and (not isinstance(payload, dict) or payload.get("verb") != "query"):
             raise ValueError("EDR POST must be a query-only request")
@@ -154,6 +158,8 @@ class EdrConnection:
                         f"EDR returned HTTP {response.status_code} for {path}. {hint}",
                         status_code=response.status_code,
                     )
+                if len(response.content) > _MAX_RESPONSE_BYTES:
+                    raise EdrError("EDR response exceeds 16 MiB; narrow the query")
                 if not response.content:
                     raise EdrError(f"EDR returned an empty response for {path}")
                 try:

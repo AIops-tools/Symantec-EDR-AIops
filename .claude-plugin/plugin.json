@@ -3,7 +3,7 @@
   "name": "symantec-edr-aiops",
   "displayName": "Symantec Endpoint Detection and Response (on-premises) AIops",
   "version": "0.1.0",
-  "description": "Governed Symantec on-prem EDR — 4 MCP tools, read-only with audit.",
+  "description": "Governed Symantec on-prem EDR — 20 MCP tools, read-only with audit.",
   "author": {
     "name": "Wei Zhou",
     "email": "zhouwei008@gmail.com",

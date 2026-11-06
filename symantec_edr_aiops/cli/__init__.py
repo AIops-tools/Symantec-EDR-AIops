@@ -58,3 +58,89 @@ def main() -> None:
     except BudgetExceeded as exc:
         typer.echo(f"Budget stopped the operation: {exc}", err=True)
         raise typer.Exit(1) from exc
+
+
+@app.command("incident-events")
+def incident_events(
+    start_time: str, end_time: str, limit: int = 100, query: str = "", next_cursor: str = ""
+) -> None:
+    _emit(edr.edr_incident_events(start_time, end_time, limit, query, next_cursor))
+
+
+@app.command("incident-lineage-events")
+def incident_lineage_events(
+    start_time: str, end_time: str, limit: int = 100, query: str = "", next_cursor: str = ""
+) -> None:
+    _emit(edr.edr_incident_lineage_events(start_time, end_time, limit, query, next_cursor))
+
+
+@app.command("system-activities")
+def system_activities(
+    start_time: str, end_time: str, limit: int = 100, query: str = "", next_cursor: str = ""
+) -> None:
+    _emit(edr.edr_system_activities(start_time, end_time, limit, query, next_cursor))
+
+
+@app.command("entities")
+def entities(query: str, limit: int = 100, next_cursor: str = "") -> None:
+    _emit(edr.edr_entities(query, limit, next_cursor))
+
+
+@app.command("file-entities")
+def file_entities(query: str, limit: int = 100, next_cursor: str = "") -> None:
+    _emit(edr.edr_file_entities(query, limit, next_cursor))
+
+
+@app.command("adversary-actors")
+def adversary_actors(query: str, limit: int = 100, next_cursor: str = "") -> None:
+    _emit(edr.edr_adversary_actors(query, limit, next_cursor))
+
+
+@app.command("adversary-files")
+def adversary_files(query: str, limit: int = 100, next_cursor: str = "") -> None:
+    _emit(edr.edr_adversary_files(query, limit, next_cursor))
+
+
+@app.command("adversary-networks")
+def adversary_networks(query: str, limit: int = 100, next_cursor: str = "") -> None:
+    _emit(edr.edr_adversary_networks(query, limit, next_cursor))
+
+
+@app.command("file-entity")
+def file_entity(sha2: str) -> None:
+    _emit(edr.edr_file_entity(sha2))
+
+
+@app.command("sandbox-command")
+def sandbox_command(command_id: str) -> None:
+    _emit(edr.edr_sandbox_command(command_id))
+
+
+@app.command("sandbox-verdict")
+def sandbox_verdict(sha2: str) -> None:
+    _emit(edr.edr_sandbox_verdict(sha2))
+
+
+@app.command("allow-list")
+def allow_list(limit: int = 50, next_cursor: str = "") -> None:
+    _emit(edr.edr_allow_list(limit, next_cursor))
+
+
+@app.command("deny-list")
+def deny_list(limit: int = 50, next_cursor: str = "") -> None:
+    _emit(edr.edr_deny_list(limit, next_cursor))
+
+
+@app.command("sandbox-activities")
+def sandbox_activities(sha2: str, limit: int = 30, next_cursor: str = "") -> None:
+    _emit(edr.edr_sandbox_activities(sha2, limit, next_cursor))
+
+
+@app.command("sandbox-events")
+def sandbox_events(sha2: str, limit: int = 30, next_cursor: str = "") -> None:
+    _emit(edr.edr_sandbox_events(sha2, limit, next_cursor))
+
+
+@app.command("sandbox-patterns")
+def sandbox_patterns(sha2: str, limit: int = 30, next_cursor: str = "") -> None:
+    _emit(edr.edr_sandbox_patterns(sha2, limit, next_cursor))
