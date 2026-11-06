@@ -12,7 +12,7 @@ The auth scheme, listed paths, query bounds and response examples informed the r
 
 ## Local validation
 
-- Contract-shaped HTTP mock tests and inherited governance tests passed (40 pytest tests). Ruff passed; Bandit found 0 Medium+ issues. The 0.1.0 wheel installed in an external virtual environment and its MCP server imported from site-packages. All five handbook gates passed over 36 tools.
+- Contract-shaped HTTP mock tests and inherited governance tests passed (42 pytest tests). Ruff passed; Bandit found 0 Medium+ issues. The 0.1.0 wheel installed in an external virtual environment and its MCP server imported from site-packages. All five handbook gates passed over 36 tools.
 - The vendored governance harness uses the same path for MCP and CLI. Query-only POST routes are explicitly allowlisted.
 
 ## Not yet verified
@@ -26,4 +26,4 @@ This tool targets the documented on-premises EDR API and is separate from SES Cl
 
 The [operations catalog](OPERATIONS.md) lists every implemented tool, source API topic and excluded operation. New read paths have contract-shaped HTTP tests. Public API examples may differ from a real tenant; all added paths remain live-unverified.
 
-All API responses above 16 MiB fail explicitly before JSON parsing to keep unexpected unbounded results out of an agent context. This does not replace server-side pagination; unpaged endpoints report measured output truncation.
+Successful login and resource responses are read as a stream with a 16 MiB decoded-body limit. The client closes the stream and raises an explicit error as soon as the limit is exceeded, before JSON parsing. Local mock-stream regression tests verify that unread chunks are not consumed, including during login. This does not replace server-side pagination; unpaged endpoints report measured output truncation.

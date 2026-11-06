@@ -4,7 +4,7 @@ import httpx
 import pytest
 
 from symantec_edr_aiops import ops
-from symantec_edr_aiops.connection import EdrConnection
+from symantec_edr_aiops.connection import EdrConnection, EdrError
 
 
 @pytest.fixture(autouse=True)
@@ -92,3 +92,40 @@ def test_sandbox_sha_is_strict_and_paged_result_is_validated():
     assert ops.sandbox_patterns(conn, sha, 10)["nextCursor"] == "n"
     with pytest.raises(ValueError, match="sha2"):
         ops.sandbox_patterns(conn, "../bad")
+
+
+@pytest.mark.parametrize("oversized_login", [False, True])
+def test_stream_stops_reading_after_response_limit(monkeypatch, oversized_login):
+    import symantec_edr_aiops.connection as connection_module
+
+    monkeypatch.setattr(connection_module, "_MAX_RESPONSE_BYTES", 70_000)
+
+    class ProbeStream(httpx.SyncByteStream):
+        def __init__(self):
+            self.read_chunks = 0
+            self.closed = False
+
+        def __iter__(self):
+            for _ in range(3):
+                self.read_chunks += 1
+                yield b" " * (64 * 1024)
+
+        def close(self):
+            self.closed = True
+
+    probe = ProbeStream()
+
+    def handler(request):
+        if (request.url.path == "/api/oauth2/tokens") == oversized_login:
+            return httpx.Response(200, stream=probe)
+        if request.url.path == "/api/oauth2/tokens":
+            return httpx.Response(200, content=b'{"token":{"access_token":"t","expires_in":3600}}')
+        return httpx.Response(200, json={})
+
+    conn = EdrConnection(
+        httpx.Client(base_url="https://example.test", transport=httpx.MockTransport(handler))
+    )
+    with pytest.raises(EdrError, match="response exceeds 16 MiB"):
+        conn.get("/api/atpapi/v2/appliances")
+    assert probe.read_chunks == 2
+    assert probe.closed
