@@ -1,6 +1,6 @@
 {
   "name": "@zw008/symantec-edr-aiops",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Governed Symantec on-prem EDR — 20 MCP tools, read-only with audit.",
   "private": true,
   "license": "MIT",

@@ -2,7 +2,7 @@
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "symantec-edr-aiops",
   "displayName": "Symantec Endpoint Detection and Response (on-premises) AIops",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Governed Symantec on-prem EDR — 20 MCP tools, read-only with audit.",
   "author": {
     "name": "Wei Zhou",

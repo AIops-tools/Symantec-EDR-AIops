@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.1 — 2026-11-14
+
+- Explain EDR query windows, entity searches, SHA-256 sandbox results and continuation metadata in the MCP schema.
+
 ## v0.1.0 — initial read-only preview
 
 - Stream login and resource responses; abort and close the response at the 16 MiB decoded-body limit.
